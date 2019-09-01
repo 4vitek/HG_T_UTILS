@@ -38,6 +38,12 @@ const argv = yargs
     .option('matnas', {
         alias: 'mtn',
         description: 'matnas mode',
+    }).option('showdmgchld', {
+        alias: 'shD',
+        description: 'show damaged itemRows (children)',
+    }).option('fixdmgchld', {
+        alias: 'fDch',
+        description: 'fix damaged itemRows (children)',
     })
     .help()
     .alias('help', 'h')
@@ -75,7 +81,7 @@ let choseHost = ()=>{
                 let database = db.db('HG_Tofes');
                 console.log(chalk.green("connected"));
                 if (argv.findDbl) {
-                    await copyUserAttachments(db);
+                    await copyUserAttachments(database);
                     console.log(chalk.green("attachments were coppied."));
                     console.log(chalk.bold.green("dicsonnecting....\n"));
                     process.exit();
@@ -88,6 +94,37 @@ let choseHost = ()=>{
                     console.log(chalk.bold.green("dicsonnecting....\n"));
                     process.exit();
                 }
+                if (argv.showdmgchld) {
+                    let usersDmgChld = await findDamagedChildren(database,'users');
+                    if(usersDmgChld && usersDmgChld.length > 0){
+                        console.log(usersDmgChld);
+                        console.log(`users ammount ${usersDmgChld.length}`);
+                    }
+                    process.exit();
+                }
+                //Fix damaged children in an itemRows array in signup
+                if (argv.fixdmgchld) {
+                    let usersDmgChld = await findDamagedChildren(database,'users');
+                    if(usersDmgChld && usersDmgChld.length > 0){
+                        console.log(`users to fix ammount ${usersDmgChld.length}`);
+                        console.log(`fixing damaged children`);
+                        const col = database.collection('users');
+                     
+                        for(let i = 0; i< usersDmgChld.length;i++){
+                            let iRows = usersDmgChld[i].employeeData.itemRows;
+                            delete usersDmgChld[i].employeeData.itemRows._t;
+                            let newItemRows = iRows._v;
+                            delete usersDmgChld[i].employeeData.itemRows._v;
+                            usersDmgChld[i].employeeData.itemRows = newItemRows;
+                            let id = usersDmgChld[i]._id;
+                            await col.updateOne({_id:id}, {$set: {'employeeData.itemRows':usersDmgChld[i].employeeData.itemRows }});
+                            console.log(usersDmgChld[i].employeeData.itemRows);
+                            console.log("FIXED");
+                        }
+                    }
+                    process.exit();
+                }
+                
             }else{
                 console.log("no db");
             }
@@ -97,8 +134,8 @@ let choseHost = ()=>{
 ///////////////////////////////////////////////////////////////////////////////////
 //Main business for finding double users and copying their attachments when needed
 //////////////////////////////////////////////////////////////////////////////////
-let copyUserAttachments = async (db)=>{
-    let database = db.db('HG_Tofes');
+let copyUserAttachments = async (database)=>{
+    // let database = db.db('HG_Tofes');
     //get double users , same userName different companies
     let result = await findDoubleUsers(database);
     if(result && result.length > 0){
@@ -137,6 +174,13 @@ let copyUserAttachments = async (db)=>{
         console.log("there is no double users!")
     }
 }
+//////////////////////////////////////////////////////////////////////////////////////////
+//Find damaged children in an itemRows array in signup
+/////////////////////////////////////////////////////////////////////////////////////////
+let findDamagedChildren = async (database,collectionName)=>{
+    return  await database.collection(collectionName).find({'employeeData.itemRows._v':{$exists:true}}).toArray();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //Find users with the same userName that exists in other company , for now only two times
 /////////////////////////////////////////////////////////////////////////////////////////
