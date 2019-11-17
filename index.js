@@ -4,11 +4,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const MongoClient = require('mongodb').MongoClient;
 const {ObjectId} = require('mongodb'); // or ObjectID 
+const XLSX = require('xlsx');
 const fs = require('fs');
 const shell = require('shelljs');
 const copydir = require('copy-dir');
 const yargs = require('yargs');
 const chalk = require('chalk');
+const _ = require('lodash');
 const pass = "1";
 const userName = "server";
 const dbName = "HG_Tofes";
@@ -44,6 +46,12 @@ const argv = yargs
     }).option('fixdmgchld', {
         alias: 'fDch',
         description: 'fix damaged itemRows (children)',
+    }).option('showCity', {
+        alias: 'shC',
+        description: 'show cities',
+    }).option('fixCity', {
+        alias: 'fc',
+        description: 'fix cities',
     })
     .help()
     .alias('help', 'h')
@@ -68,6 +76,7 @@ let choseHost = ()=>{
 /////////////////////////////////////////////////////////
 (() =>{
     let host = choseHost();
+    let filePath = './cities.xlsx';
     MongoClient.connect(`mongodb://${userName}:${pass}@${host}:27017/${dbName}`, 
     { 
         useNewUrlParser: true,
@@ -123,6 +132,9 @@ let choseHost = ()=>{
                         }
                     }
                     process.exit();
+                }
+                if(argv.showCity){
+                    parseExcel(filePath,database);
                 }
                 
             }else{
@@ -212,7 +224,42 @@ let logInfoDouble = (result,userNameArray = undefined)=>{
     console.log(chalk.yellow("array of double usernames:"),userNameArray);
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-
+ let parseExcel = async (filePath,database)=>{
+    let workbook = XLSX.readFile(filePath,{cellDates: true});
+    let mapperWorkBook =  workbook.Sheets.Sheet1;
+    let sheet_name_list = workbook.SheetNames;
+    let foundUsers = [];
+    let report = {};
+    report.addedData = [];
+    report.rejectedData = [];
+    let parsedXLS = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet_name_list[0]]); 
+    let cnt =  parsedXLS.length + 1;
+    let counter = 0;
+    for (let i = parsedXLS.length - 1; i >= 0; i -= 1) {
+        let cityCode    =  parsedXLS[i]["קוד"];
+        let cityName    =  parsedXLS[i]["תאור"];
+        let users = await database.collection('users').find({'employeeData.addressData.city':cityName}).toArray();
+        foundUsers = _.concat(foundUsers,users);
+        console.log(`proccessing employee number:${++counter}`);
+    }
+    console.log(foundUsers.length);
+    let foundUserIds = foundUsers.map(u=>u._id);
+    let problematicCitiesUsers = await database.collection('users').find({'_id':{$nin:foundUserIds}}).toArray();
+    console.log(`${problematicCitiesUsers.length} problematic users found`);
+    let stream = fs.createWriteStream("usersInvalidCities.txt");
+    counter = 0;
+    stream.once('open', function(fd) {
+        for (let i = 0; i < problematicCitiesUsers.length; i++) {
+            if(problematicCitiesUsers[i].employeeData && problematicCitiesUsers[i].employeeData.addressData && problematicCitiesUsers[i].employeeData.addressData.city){
+                stream.write(`The users are ${problematicCitiesUsers[i]._id}\n`);
+                stream.write(`The cities are ${problematicCitiesUsers[i].employeeData.addressData.city}\n`);
+                console.log(`writing to file number:${++counter}`);
+            }
+        }
+        stream.end();
+        console.log("DONE");
+    });
+ }
 ///////////////////-----------------------/////////////////////////////////////////////////
 
 
