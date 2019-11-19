@@ -50,8 +50,20 @@ const argv = yargs
         alias: 'shC',
         description: 'show cities',
     }).option('fixCity', {
-        alias: 'fc',
-        description: 'fix cities',
+        alias: 'tr',
+        description: 'Trims cities which are written with space',
+    }).option('distinctCities', {
+        alias: 'dc',
+        description: 'find problematic cities',
+    }).option('chngeToCode', {
+        alias: 'cht',
+        description: 'change users text to code',
+    }).option('fixTextForms', {
+        alias: 'ffx',
+        description: 'fix text in forms',
+    }).option('fixCodeForms', {
+        alias: 'fxfc',
+        description: 'fix code in forms',
     })
     .help()
     .alias('help', 'h')
@@ -70,6 +82,127 @@ let choseHost = ()=>{
         host = matnasHost;
     }
     return host;
+}
+let fixUsers = async (database)=>{
+    let users = await database.collection('users').find({}).toArray();
+    let cities = await database.collection('cities').find({}).toArray();
+    for (let i = 0; i < users.length; i++) {
+        if(users[i].employeeData && users[i].employeeData.addressData && users[i].employeeData.addressData.city){
+            let cityObj = cities.find(c=>c.cityName == users[i].employeeData.addressData.city);
+            if(cityObj){
+                await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'employeeData.addressData.city':cityObj.cityCode }});
+                console.log(`${users[i].userName} updated with city code ${cityObj.cityCode}`);
+            }
+        }
+    }
+    console.log("DONE");
+}
+let fixTextForms = async (database)=>{
+    let forms = await database.collection('forms').find({}).toArray();
+    console.log(forms.length);
+    for (let i = 0; i < forms.length; i++) {
+        if(forms[i].formData){
+            let formDataObj = JSON.parse(forms[i].formData);
+            console.log(forms[i].formData.city)
+            if(!formDataObj || !formDataObj.city){
+                continue;
+            }
+            let trimedVal = formDataObj.city.trim();
+            switch(trimedVal) {
+                case "פתח תקוה":
+                    trimedVal = "פתח תקווה";
+                  break;
+                case "תל אביב":
+                case "תל אביב-יפ":
+                    trimedVal = "תל אביב-יפו";  
+                  break;
+                  case "מודיעין עילי":
+                    trimedVal = "מודיעין עילית";  
+                  break;
+                  case "קרית אונו":
+                    trimedVal = "קריית אונו";  
+                  break;
+                  case "קרית ביאליק":
+                    trimedVal = "קריית ביאליק";  
+                  break;
+                  case "קרית גת":
+                    trimedVal = "קריית גת";  
+                  break;
+                  case "הרצלייה":
+                    trimedVal = "הרצליה";  
+                  break;
+                  case 'פ"ת':
+                        trimedVal = "פתח תקווה";  
+                  break;
+                  case "אום אל-פחם":
+                        trimedVal = "אום אל פחם";  
+                  break;
+                  case "נהרייה":
+                        trimedVal = "נהריה";  
+                  break;
+                  case "פרדס חנה":
+                        trimedVal = "פרדס חנה-כרכור";  
+                  break;
+                  case 'ראשל"צ':
+                  case 'ראשון לציו':
+                        trimedVal = "ראשון לציון";  
+                  break;
+                  case "גני תקוה":
+                        trimedVal = "גני תקווה";  
+                  break;
+                  case "קרית מוצקין":
+                        trimedVal = "קריית מוצקין";  
+                  break;
+                  case "קרית מלאכי":
+                        trimedVal = "קריית מלאכי";  
+                  break;
+                  case "קרית אתא":
+                        trimedVal = "קריית אתא";  
+                  break;
+                  case "קרית ים":
+                        trimedVal = "קריית ים";  
+                  break;
+                  case "מודעין עילית":
+                        trimedVal = "מודיעין עילית";  
+                  break;
+                  case 'ב"ב':
+                        trimedVal = "בני ברק";  
+                  break;
+                  case 'דיר אל אסד':
+                        trimedVal = "דיר אל-אסד";  
+                  break;
+                  case "מודעין עילית":
+                        trimedVal = "מודיעין עילית";  
+                  break;
+                  case 'בת-ים':
+                        trimedVal = "בת ים";  
+                  break;
+                default:         
+                  // code block
+              }
+              console.log(`${forms[i]._id} text fixed`);
+              formDataObj.city = trimedVal;
+              await database.collection('forms').updateOne({_id:forms[i]._id}, {$set: {'formData':JSON.stringify(formDataObj)}});
+        }
+    }
+    console.log(`Done`);
+}
+let fixFormsCodes = async (database)=>{
+    let forms = await database.collection('forms').find({}).toArray();
+    let cities = await database.collection('cities').find({}).toArray();
+    for (let i = 0; i < forms.length; i++) {
+        let formDataObj = JSON.parse(forms[i].formData);
+        if(formDataObj && formDataObj.city){
+            let cityObj = cities.find(c=>c.cityCode == formDataObj.city);
+            if(cityObj){
+                formDataObj.city = cityObj.cityCode;
+                formDataObj.cityText = cityObj.cityName;
+                await database.collection('forms').updateOne({_id:forms[i]._id}, {$set: {'formData':JSON.stringify(formDataObj)}});
+                console.log(`${forms[i]._id} updated with city code ${cityObj.cityCode}`);
+            }
+        }
+    }
+    console.log("DONE");
 }
 /////////////////////////////////////////////////////////
 //connect to HG_Tofes and main BL Main function
@@ -133,10 +266,18 @@ let choseHost = ()=>{
                     }
                     process.exit();
                 }
-                if(argv.showCity){
+                if(argv.showCity || argv.fixCity || argv.distinctCities){
                     parseExcel(filePath,database);
                 }
-                
+                if(argv.chngeToCode){
+                    fixUsers(database);
+                }
+                if(argv.fixTextForms){
+                    fixTextForms(database);
+                }
+                if(argv.fixCodeForms){
+                    fixFormsCodes(database);
+                }
             }else{
                 console.log("no db");
             }
@@ -248,15 +389,110 @@ let logInfoDouble = (result,userNameArray = undefined)=>{
     console.log(`${problematicCitiesUsers.length} problematic users found`);
     let stream = fs.createWriteStream("usersInvalidCities.txt");
     counter = 0;
-    stream.once('open', function(fd) {
+    stream.once('open', async(fd)=> {
         for (let i = 0; i < problematicCitiesUsers.length; i++) {
             if(problematicCitiesUsers[i].employeeData && problematicCitiesUsers[i].employeeData.addressData && problematicCitiesUsers[i].employeeData.addressData.city){
-                stream.write(`The users are ${problematicCitiesUsers[i]._id}\n`);
-                stream.write(`The cities are ${problematicCitiesUsers[i].employeeData.addressData.city}\n`);
-                console.log(`writing to file number:${++counter}`);
+                //trim all cities with spaces
+                if(argv.fixCity){
+                    let trimedVal = problematicCitiesUsers[i].employeeData.addressData.city.trim();
+                    switch(trimedVal) {
+                        case "פתח תקוה":
+                            trimedVal = "פתח תקווה";
+                          break;
+                        case "תל אביב":
+                        case "תל אביב-יפ":
+                            trimedVal = "תל אביב-יפו";  
+                          break;
+                          case "מודיעין עילי":
+                            trimedVal = "מודיעין עילית";  
+                          break;
+                          case "קרית אונו":
+                            trimedVal = "קריית אונו";  
+                          break;
+                          case "קרית ביאליק":
+                            trimedVal = "קריית ביאליק";  
+                          break;
+                          case "קרית גת":
+                            trimedVal = "קריית גת";  
+                          break;
+                          case "הרצלייה":
+                            trimedVal = "הרצליה";  
+                          break;
+                          case 'פ"ת':
+                                trimedVal = "פתח תקווה";  
+                          break;
+                          case "אום אל-פחם":
+                                trimedVal = "אום אל פחם";  
+                          break;
+                          case "נהרייה":
+                                trimedVal = "נהריה";  
+                          break;
+                          case "פרדס חנה":
+                                trimedVal = "פרדס חנה-כרכור";  
+                          break;
+                          case 'ראשל"צ':
+                          case 'ראשון לציו':
+                                trimedVal = "ראשון לציון";  
+                          break;
+                          case "גני תקוה":
+                                trimedVal = "גני תקווה";  
+                          break;
+                          case "קרית מוצקין":
+                                trimedVal = "קריית מוצקין";  
+                          break;
+                          case "קרית מלאכי":
+                                trimedVal = "קריית מלאכי";  
+                          break;
+                          case "קרית אתא":
+                                trimedVal = "קריית אתא";  
+                          break;
+                          case "קרית ים":
+                                trimedVal = "קריית ים";  
+                          break;
+                          case "מודעין עילית":
+                                trimedVal = "מודיעין עילית";  
+                          break;
+                          case 'ב"ב':
+                                trimedVal = "בני ברק";  
+                          break;
+                          case 'דיר אל אסד':
+                                trimedVal = "דיר אל-אסד";  
+                          break;
+                          case "מודעין עילית":
+                                trimedVal = "מודיעין עילית";  
+                          break;
+                          case 'בת-ים':
+                                trimedVal = "בת ים";  
+                          break;
+                        default:
+                                
+                          // code block
+                      }
+                    await database.collection('users').updateOne({_id:problematicCitiesUsers[i]._id}, {$set: {'employeeData.addressData.city':trimedVal }});
+                    console.log("updated");
+                }else if(argv.showCity){
+                    stream.write(`The users are ${problematicCitiesUsers[i]._id}\n`);
+                    stream.write(`The cities are ${problematicCitiesUsers[i].employeeData.addressData.city}\n`);
+                    console.log(`writing to file number:${++counter}`);
+                }
             }
         }
         stream.end();
+        if(argv.distinctCities){
+            let problematicNames = problematicCitiesUsers.map(p=>p.employeeData && p.employeeData.addressData && p.employeeData.addressData.city);
+            //let uniqueProb = [...new Set(problematicNames)];
+            problematicNames = problematicNames.filter(function (el) {
+                return el != null && el != "";
+            });
+            const result = _.values(_.groupBy(problematicNames)).map(d => ({city: d[0], count: d.length}));
+            let stream2 = fs.createWriteStream("distinctCities.txt");
+            stream2.once('open', async(fd)=> { 
+                for (let i = 0; i < result.length; i++) {
+                    stream2.write(`City:${result[i].city}. Count:${result[i].count}\n`);
+                }
+                stream2.end();
+            })
+        }
         console.log("DONE");
     });
  }

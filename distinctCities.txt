@@ -1,0 +1,399 @@
+City:6. Count:1
+City:326. Count:1
+City:469. Count:1
+City:681. Count:1
+City:850. Count:1
+City:1015. Count:1
+City:1061. Count:1
+City:1200. Count:5
+City:1233. Count:1
+City:1273. Count:1
+City:2610. Count:1
+City:2650. Count:1
+City:2660. Count:1
+City:3000. Count:14
+City:3563. Count:1
+City:3616. Count:3
+City:3650. Count:1
+City:3720. Count:1
+City:3797. Count:1
+City:5000. Count:12
+City:6100. Count:1
+City:6200. Count:1
+City:6300. Count:2
+City:6500. Count:1
+City:6600. Count:4
+City:7100. Count:1
+City:7400. Count:1
+City:7900. Count:1
+City:8300. Count:2
+City:8400. Count:2
+City:8600. Count:2
+City:9300. Count:1
+City:9400. Count:1
+City:9800. Count:1
+City:לקייה. Count:1
+City:ישראל/ ירושלים. Count:1
+City:כסייפה. Count:2
+City:rishon lezion. Count:1
+City:אירוס. Count:1
+City:עמיחי. Count:1
+City:מג'אר. Count:1
+City:פרדסיה. Count:3
+City:שלומי ת.ד. 2512. Count:1
+City:באקה אלגרבייה. Count:1
+City:beer sheva. Count:1
+City:Jaljulia. Count:1
+City:דולב ד.נ מודיעין. Count:1
+City:יהוד- מונוסון. Count:1
+City:ברוכין. Count:3
+City:Omer. Count:1
+City:Modiin. Count:2
+City:nir david. Count:1
+City:דריג'את. Count:1
+City:ת"ד 1395 דימונה. Count:1
+City:חריש. Count:4
+City:טייבה המשולש. Count:3
+City:Jerusalem. Count:3
+City:נריה. Count:1
+City:nokdim. Count:1
+City:דבוריה. Count:4
+City:kfar kana. Count:1
+City:טמרה 30811. Count:1
+City:ביר אל מכסור. Count:2
+City:Tel Aviv. Count:1
+City:קיבוץ אשדות יעקב איחוד. Count:1
+City:קיבוץ עמיר. Count:1
+City:rehovot. Count:1
+City:יוקנעם. Count:2
+City:Hadera. Count:1
+City:Kfar Saba. Count:1
+City:קיבוץ הזורע. Count:1
+City:ג'ת במשולש. Count:2
+City:Kadima. Count:1
+City:שערי תקוונ. Count:1
+City:דאלית אל כרמל. Count:3
+City:אום אל פחם. Count:21
+City:דאלית אל- כרמל. Count:1
+City:ברטעה. Count:1
+City:גלגוליה. Count:3
+City:יורשלים. Count:3
+City:באקה אלגרביה. Count:4
+City:ירושלים-ראסל אל עמוד. Count:1
+City:באקא אלגרבייה. Count:1
+City:נהריה. Count:12
+City:אבו טור. Count:2
+City:ירושלים-סילוואן. Count:1
+City:עארה. Count:3
+City:עטרות ירושלים. Count:1
+City:כפר עקב. Count:2
+City:ירושלים-סלוואן. Count:2
+City:ערערה מרכז. Count:1
+City:אום אל פאחם. Count:6
+City:ירושלים-עקב. Count:1
+City:ירושלים-רסל עמוד. Count:1
+City:בקה אלגרביה. Count:2
+City:ביר אל - מכסור. Count:1
+City:ירושליים. Count:1
+City:עיסאוויה. Count:1
+City:ברטעה בס"מה. Count:1
+City:ירושלים-גאבר מוכבר. Count:2
+City:ירושלים-העיר העתיקה. Count:1
+City:אום אלפחם. Count:2
+City:יושלים. Count:1
+City:ירשלים. Count:1
+City:קציר. Count:5
+City:בתים. Count:2
+City:דלית אל כרמל. Count:4
+City:kfar barah. Count:1
+City:כפר משהד. Count:3
+City:ראשון. Count:1
+City:מעלה אדומין. Count:1
+City:יהוד מונוסון. Count:4
+City:פרדס-חנה כרכור. Count:1
+City:פתח תיקווה. Count:3
+City:ת"א. Count:92
+City:קריתעקרון. Count:1
+City:שדה חמד. Count:1
+City:נס-ציונה. Count:1
+City:תל-אביב. Count:8
+City:שערי תקוה. Count:5
+City:rnkv. Count:1
+City:מושב גנות. Count:1
+City:נווה מונוסון. Count:2
+City:HXUS VNGKV. Count:1
+City:פרדס חנה כרכור. Count:7
+City:פרדיס. Count:2
+City:רידינג 3. Count:1
+City:ארלוזורוב. Count:1
+City:מושב שתולים. Count:2
+City:טירת הכרמל. Count:6
+City:תל אביב יפו. Count:8
+City:ראשון לצייון. Count:1
+City:כפר בית ג'אן. Count:1
+City:קיבוץ עינת. Count:2
+City:כרכור. Count:2
+City:קיבוץ גזית. Count:1
+City:חדרה(באה ר"ג. Count:1
+City:הרא"ה 173. Count:1
+City:יוספטל 49 א. Count:1
+City:ג'וליס. Count:1
+City:נופית ת.ד 5348. Count:1
+City:מושב חירות. Count:1
+City:עוספיה. Count:1
+City:קרית חיים. Count:3
+City:מודיעין מכבים רעות. Count:1
+City:יוחנן בן זכאי. Count:1
+City:יהוד מונסון. Count:1
+City:יקנעם. Count:3
+City:קריאל גרדוש2. Count:1
+City:דאלית אלכרמל. Count:1
+City:בורוכוב 28 דירה 21. Count:1
+City:מעלות תרשיחא. Count:3
+City:ג'דידה-מכר. Count:2
+City:תא. Count:2
+City:רמת החיל תא. Count:2
+City:מושב ערוגות. Count:1
+City:מושב נטעים. Count:1
+City:גן-הדרום. Count:1
+City:יהוד-מונוסון. Count:1
+City:קרית טבעון. Count:2
+City:בנימינה- גבעת עדה. Count:1
+City:מושב אורות. Count:1
+City:שהם. Count:1
+City:רענננה. Count:1
+City:קרית טבעוןו. Count:1
+City:רמתגן. Count:1
+City:נורדייה. Count:1
+City:מודיעין-מכבים-רעות. Count:2
+City:קדימה- צורן. Count:1
+City:רמת-גן. Count:1
+City:כפר חבד. Count:3
+City:ראשלצ. Count:1
+City:Holon. Count:1
+City:יהוד- מונוסו. Count:2
+City:מודיעין מכבי. Count:2
+City:תל אביב- יפו. Count:5
+City:שמשון. Count:1
+City:עין חרוד מאוחד. Count:1
+City:גיטל לוין 34. Count:1
+City:מושב יכיני. Count:1
+City:גינות שומרון. Count:1
+City:אורלוב 10. Count:1
+City:מודיעין- מכב. Count:2
+City:ביתר. Count:6
+City:מושב בן שמן. Count:1
+City:ד.נ. נגב. Count:1
+City:הר ברכה. Count:1
+City:ר"ג. Count:5
+City:מעאר. Count:1
+City:מושב אורה. Count:1
+City:גני טל. Count:2
+City:מתיתיהו. Count:1
+City:רמת בית שמש. Count:1
+City:מושב מחולה. Count:1
+City:בורגתא. Count:1
+City:מודיעין עלית. Count:5
+City:מושב ברקת. Count:1
+City:עץ  אפרים. Count:1
+City:נופי נחמיה. Count:1
+City:יקיר 351. Count:1
+City:פתח-תקוה. Count:6
+City:משמר אילון. Count:1
+City:י-ם. Count:1
+City:ק. גת. Count:2
+City:קרית יערים. Count:1
+City:קרית ספר. Count:6
+City:א.א. פחם. Count:1
+City:ת.ד. 131. Count:1
+City:קרית גן. Count:1
+City:מעלות. Count:2
+City:חללי מינכן. Count:1
+City:כפרחב"ד 302. Count:1
+City:ק. עקרון. Count:3
+City:גני יבנה. Count:1
+City:אזורים. Count:1
+City:גינות. Count:1
+City:ג'לג'וליה. Count:4
+City:כ"ס. Count:1
+City:כפ"ס. Count:3
+City:מושב חמד. Count:2
+City:ק.אונו. Count:1
+City:רמה"ש. Count:1
+City:יפו. Count:9
+City:חולוטן. Count:1
+City:חולו. Count:1
+City:בי ברק. Count:1
+City:תל טביב. Count:1
+City:בני  ברק. Count:2
+City:bney brak. Count:1
+City:בני בכרק. Count:1
+City:מבשרת. Count:1
+City:רמת בית שמש ג'2. Count:1
+City:ביתר עילת. Count:1
+City:אפרת. Count:3
+City:טל מנשה. Count:2
+City:מודיעיו עילי. Count:1
+City:קרית שמונה. Count:1
+City:בני בר'ק. Count:1
+City:ביתר עלית. Count:2
+City:ביתר עילי. Count:1
+City:מודיעין עיל. Count:3
+City:שומרון. Count:1
+City:הדר גנים. Count:1
+City:ת"א-יפו. Count:1
+City:תלאביב. Count:1
+City:ביאליק 28. Count:1
+City:חשמונאים 9. Count:1
+City:ישוב ענב. Count:1
+City:holon. Count:1
+City:רבנו תם 8. Count:1
+City:beny barak. Count:1
+City:בניברק. Count:2
+City:יצחק ניסים 2. Count:1
+City:בנ ברק. Count:1
+City:עינב. Count:2
+City:מודיעין עי. Count:2
+City:רנת גן. Count:1
+City:נוה מונסון. Count:1
+City:ברכפלד. Count:1
+City:בית אריה עופ. Count:1
+City:קיבוץ מפלסים. Count:1
+City:מוןדיעין עיל. Count:1
+City:כפר בסמ"ה. Count:1
+City:יוקנעם עילית. Count:1
+City:אופ אל פאחם. Count:1
+City:עוספיא. Count:1
+City:ק.מלאכי. Count:1
+City:ביר אל מקסור. Count:1
+City:מושיירפה. Count:2
+City:באקה אל גרבי. Count:2
+City:לב השומרון. Count:1
+City:בני עייש. Count:3
+City:מושב שחר. Count:1
+City:חוואלד. Count:1
+City:טירה  ת.ד 784. Count:1
+City:ירושלים-. Count:1
+City:ירושלים-אטור. Count:1
+City:כפר מועאויה. Count:1
+City:באקה  אל גר. Count:1
+City:ניצן ב'. Count:1
+City:טייבה. Count:7
+City:א.א.פחם. Count:2
+City:סאג'ור. Count:1
+City:סחנין. Count:8
+City:פורדייס. Count:1
+City:דייר אל אסד. Count:4
+City:מושבבית יוסף. Count:1
+City:ת.ד 2189. Count:1
+City:קיבוץ מחניים. Count:1
+City:מושב שרשרת. Count:1
+City:כפר טירעאן. Count:1
+City:מועאויה. Count:1
+City:כפר ראמה. Count:1
+City:כפר אכסאל. Count:2
+City:מצפה אילן. Count:1
+City:טובא זנגריה. Count:4
+City:סח'נין. Count:4
+City:דייר חנא. Count:3
+City:כפר מזרעה. Count:2
+City:מג'ד אל-כרום. Count:1
+City:גדיידה מכר. Count:2
+City:כפר נחץ. Count:1
+City:ג'דיידה מכר. Count:2
+City:קיבוץ געתון. Count:2
+City:טייבה בעמק. Count:1
+City:קלנסוואה. Count:2
+City:כפר פורדיס. Count:1
+City:סכנין. Count:3
+City:קלנסואה. Count:5
+City:כאוכב אבו אל. Count:1
+City:בועייה. Count:1
+City:גוש חלב. Count:1
+City:ג'ת המשולש. Count:3
+City:כפר סאלם. Count:1
+City:עיר עראביה. Count:1
+City:באקה אל גרביה. Count:5
+City:מכר ג'דידה. Count:1
+City:דייר-אל אסד. Count:1
+City:קיבוץ יראון. Count:1
+City:כפר עארבה. Count:2
+City:כפר עארה. Count:1
+City:קלאנסואה. Count:1
+City:כפר ג'וליס. Count:1
+City:כעבייה. Count:1
+City:כפר  יפיע. Count:1
+City:כפר  אכסאל. Count:1
+City:כפר גדיידה. Count:1
+City:כפר ג'דיידה. Count:1
+City:תמרה 0. Count:1
+City:חיפה,בת גלים. Count:1
+City:מושב מזור. Count:1
+City:כפר דבוריה. Count:1
+City:אבוסנאן. Count:1
+City:ק.רוחמה. Count:1
+City:ב"ש. Count:1
+City:ק.נורדאו. Count:1
+City:ראס אל עמוד. Count:1
+City:נווה יעקב-י-. Count:1
+City:בית-שמש. Count:2
+City:כפר מכר. Count:1
+City:מג'דל אל כרו. Count:1
+City:דיר אל- אסאד. Count:1
+City:קרית ארבע. Count:1
+City:בית זרזיר. Count:1
+City:כואכב אבואל. Count:1
+City:מאגד אל כרום. Count:1
+City:קדימה -צורן. Count:1
+City:מעלה אדומעם. Count:1
+City:מחנה ענתה. Count:1
+City:קריית טבעו. Count:2
+City:פרדס חנה-כ. Count:1
+City:קריית ביאל. Count:7
+City:haifa. Count:1
+City:מודיעין-מכבי. Count:14
+City:מעלה אדומי. Count:1
+City:קריית מוצק. Count:7
+City:ראש הנקרה. Count:1
+City:דובב. Count:1
+City:מרחביה-קיב. Count:1
+City:חבצלת השרו. Count:1
+City:דאלית אל-כ. Count:5
+City:יקנעם עילי. Count:6
+City:חפציבה. Count:1
+City:עלי זהב לשם. Count:1
+City:קריית שמונ. Count:3
+City:קריית נטפי. Count:1
+City:כפר מעש. Count:1
+City:גבעת השלוש. Count:1
+City:טייבה משולש. Count:1
+City:ירושלים שעפט. Count:1
+City:KADIMA. Count:1
+City:ירושלים-בית חנינא. Count:1
+City:מועאוויה. Count:1
+City:בועיינה. Count:1
+City:קלנדיה. Count:1
+City:המלך אמציה 8. Count:1
+City:באקה ג'ת. Count:1
+City:ד.נ. לכיש. Count:1
+City:עיסוויה. Count:1
+City:כפר עקא. Count:1
+City:גילה ירושלים. Count:1
+City:גבעת עזר. Count:1
+City:כאוכב. Count:1
+City:ט. כרמל. Count:1
+City:מושב גיתית. Count:1
+City:כפר ריינה. Count:2
+City:ראש עין. Count:3
+City:עמישב. Count:1
+City:כפר קאסם ,ת״ד 577. Count:1
+City:מושב עופר. Count:1
+City:Allston. Count:1
+City:שייח דנון. Count:1
+City:קיבוץ אילון. Count:1
+City:קיבוץ פלמחים. Count:1
+City:גיזו 39. Count:1
+City:מושב שתלים. Count:1
+City:קיבוץ שדה נח. Count:1
+City:ד.נ עמק סורק. Count:1
+City:מושב יציץ. Count:1
