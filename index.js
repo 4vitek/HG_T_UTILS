@@ -64,6 +64,33 @@ const argv = yargs
     }).option('fixCodeForms', {
         alias: 'fxfc',
         description: 'fix code in forms',
+    }).option('traverseForms', {
+        alias: 'tF',
+        description: 'traverse forms',
+    }).option('fixIashuvMezake', {
+        alias: 'fxM',
+        description: 'fix mezake',
+    }).option('fixIashuvMizakeCodes', {
+        alias: 'fyc',
+        description: 'fix mezake to codes',
+    }).option('showWrongMates', {
+        alias: 'shWm',
+        description: 'shows mates that are wrong (booleans)',
+    }).option('updateWrongMates', {
+        alias: 'updWm',
+        description: 'shows mates that are wrong (booleans)',
+    }).option('initFirstMessage', {
+        alias: 'initF',
+        description: 'clear first message indication',
+    }).option('eml', {
+        alias: 'insMail',
+        description: 'email stub',
+    }).option('removeFirstWorker', {
+        alias: 'rmF',
+        description: 'removes first year worker',
+    }).option('initPass', {
+        alias: 'iP',
+        description: 'initiates user password in specific company',
     })
     .help()
     .alias('help', 'h')
@@ -103,11 +130,17 @@ let fixTextForms = async (database)=>{
     for (let i = 0; i < forms.length; i++) {
         if(forms[i].formData){
             let formDataObj = JSON.parse(forms[i].formData);
-            console.log(forms[i].formData.city)
-            if(!formDataObj || !formDataObj.city){
+            let city = "";
+            if(argv.fixIashuvMezake){
+                city = formDataObj.inputYeshuvMezake ? formDataObj.inputYeshuvMezake : "";
+            }else{
+                city = formDataObj.city ? formDataObj.city : "";
+            }
+            console.log(city)
+            if(!city){
                 continue;
             }
-            let trimedVal = formDataObj.city.trim();
+            let trimedVal = city.trim();
             switch(trimedVal) {
                 case "פתח תקוה":
                     trimedVal = "פתח תקווה";
@@ -180,29 +213,136 @@ let fixTextForms = async (database)=>{
                 default:         
                   // code block
               }
-              console.log(`${forms[i]._id} text fixed`);
-              formDataObj.city = trimedVal;
+              if(argv.fixIashuvMezake){
+                console.log(`${forms[i]._id} text fixed`);
+                console.log(`${forms.length}  fixed`);
+                formDataObj.inputYeshuvMezake = trimedVal;
+              }else{
+                console.log(`${forms[i]._id} text fixed`);
+                console.log(`${forms.length}  fixed`);
+                formDataObj.city = trimedVal;
+              }
               await database.collection('forms').updateOne({_id:forms[i]._id}, {$set: {'formData':JSON.stringify(formDataObj)}});
         }
     }
     console.log(`Done`);
 }
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////fixFormsCodes///////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 let fixFormsCodes = async (database)=>{
     let forms = await database.collection('forms').find({}).toArray();
     let cities = await database.collection('cities').find({}).toArray();
     for (let i = 0; i < forms.length; i++) {
         let formDataObj = JSON.parse(forms[i].formData);
-        if(formDataObj && formDataObj.city){
-            let cityObj = cities.find(c=>c.cityCode == formDataObj.city);
+        let city = "";
+        if(argv.fixIashuvMizakeCodes){
+            city = formDataObj.inputYeshuvMezake ? formDataObj.inputYeshuvMezake : "";
+        }else{
+            city = formDataObj.city ? formDataObj.city : "";
+        }
+        if(formDataObj && city){
+            let cityObj = cities.find(c=>c.cityName == city);
             if(cityObj){
-                formDataObj.city = cityObj.cityCode;
-                formDataObj.cityText = cityObj.cityName;
+                if(argv.fixIashuvMizakeCodes){
+                    formDataObj.inputYeshuvMezake = cityObj.cityCode;
+                }else{
+                    formDataObj.city = cityObj.cityCode;
+                    formDataObj.cityText = cityObj.cityName;
+                }
                 await database.collection('forms').updateOne({_id:forms[i]._id}, {$set: {'formData':JSON.stringify(formDataObj)}});
                 console.log(`${forms[i]._id} updated with city code ${cityObj.cityCode}`);
             }
         }
     }
     console.log("DONE");
+}
+
+let showWrongMates = async (database)=>{
+    let users = await database.collection('users').find({}).toArray();
+    let cnt = 0;
+    for (let i = 0; i < users.length; i++) {
+        if(users[i].employeeData && users[i].employeeData.partnerData && users[i].employeeData.partnerData.isWorking 
+            && typeof users[i].employeeData.partnerData.isWorking === "boolean"){
+            let partnerDataObj = users[i].employeeData.partnerData;
+            console.log(`the mate declaration is ${partnerDataObj.isWorking} at user ${users[i].userName}`);
+            ++cnt;
+        }
+    }
+    console.log(cnt);
+}
+let updateWrongMates = async (database)=>{
+    let users = await database.collection('users').find({}).toArray();
+    let cnt = 0;
+    for (let i = 0; i < users.length; i++) {
+        if(users[i].employeeData && users[i].employeeData.partnerData && users[i].employeeData.partnerData.isWorking 
+            && typeof users[i].employeeData.partnerData.isWorking === "boolean"){
+            let partnerDataObj = users[i].employeeData.partnerData;
+            if(partnerDataObj.isWorking){
+                partnerDataObj.isWorking = "mateHasSallary";
+            }else{
+                partnerDataObj.isWorking = "mateNoSallary";
+            }
+            await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'employeeData.partnerData':partnerDataObj}});
+            console.log(`UPDATED: the mate declaration is ${partnerDataObj.isWorking} at user ${users[i].userName}`);
+            ++cnt;
+        }
+    }
+    console.log(cnt);
+}
+//ObjectId("5c4ed5ab6c93a802608f8690")
+let initFirstMessage = async (database)=>{//5dc7b3a53603ea130c59a725
+    let users = await database.collection('users').find({'employeeData.companyId':ObjectId("5c4ed5ab6c93a802608f8690")}).toArray();
+    for (let i = 0; i < users.length; i++) {
+        await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'isFirstMessageSent':false}});
+    }
+}
+
+let eml = async (database)=>{
+    let users = await database.collection('users').find({'employeeData.companyId':ObjectId("5dc7b3a53603ea130c59a725"),'employeeData.email':{ $exists: false }}).toArray();
+    for (let i = 0; i < users.length; i++) {
+        console.log(`UPDATED: the user ${users[i].userName}`);
+        await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'employeeData.email':'team3101@gmail.com'}});
+    }
+}
+
+let removeFirstWorker = async (database)=>{
+    let users = await database.collection('users').find({'employeeData.companyId':ObjectId("5dc7b3a53603ea130c59a725")}).toArray();
+    for (let i = 0; i < users.length; i++) {
+        console.log(`UPDATED: the user ${users[i].userName}`);
+        await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'isFirstYearWorker101':false}});
+    }
+}
+
+//For ezer me tsion
+let initPass = async (database)=>{
+    let users = await database.collection('users').find( {'userType' : "employee", 'employeeData.companyId': 
+    { $in: [ObjectId("5c482881ca20d50f3c2a7463"),
+            ObjectId("5c4828acca20d50f3c2a7465")] 
+    } } ).toArray();
+    let i;
+    for (i = 0; i < users.length; i++) {
+        console.log(`UPDATED: the user ${users[i].userName}`);
+        await database.collection('users').updateOne({_id:users[i]._id}, {
+            $set: {'isFirstEntrance':true,'password' : 'C5xXuEZEQH4Rm1XnaMLbAw2VuvUo'}
+        });
+    }
+    console.log(`${i+1} users were updated`)
+    console.log("DONE");
+}
+
+let traverseForms  = async (database)=>{
+    let forms = await database.collection('forms').find({}).toArray();
+    let cnt = 0;
+    for (let i = 0; i < forms.length; i++) {
+        let formDataObj = JSON.parse(forms[i].formData);
+        if(formDataObj && formDataObj.inputYeshuvMezake){
+                console.log(`${forms[i]._id} updated with city code ${formDataObj.inputYeshuvMezake}`);
+                ++cnt;
+        }
+    }
+    console.log(cnt);
 }
 /////////////////////////////////////////////////////////
 //connect to HG_Tofes and main BL Main function
@@ -272,11 +412,32 @@ let fixFormsCodes = async (database)=>{
                 if(argv.chngeToCode){
                     fixUsers(database);
                 }
-                if(argv.fixTextForms){
+                if(argv.fixTextForms || argv.fixIashuvMezake){
                     fixTextForms(database);
                 }
-                if(argv.fixCodeForms){
+                if(argv.fixCodeForms || argv.fixIashuvMizakeCodes){
                     fixFormsCodes(database);
+                }
+                if(argv.traverseForms){
+                    traverseForms(database);
+                }
+                if(argv.showWrongMates){
+                    showWrongMates(database);
+                }
+                if(argv.updateWrongMates){
+                    updateWrongMates(database);
+                }
+                if(argv.initFirstMessage){
+                    initFirstMessage(database);
+                }
+                if(argv.eml){
+                    eml(database);
+                }
+                if(argv.removeFirstWorker){
+                    removeFirstWorker(database);
+                }
+                if(argv.initPass){
+                    initPass(database);
                 }
             }else{
                 console.log("no db");
