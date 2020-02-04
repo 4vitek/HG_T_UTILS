@@ -91,6 +91,9 @@ const argv = yargs
     }).option('initPass', {
         alias: 'iP',
         description: 'initiates user password in specific company',
+    }).option('showDamagedFiles', {
+        alias: 'shwDF',
+        description: 'show files which differ from db',
     })
     .help()
     .alias('help', 'h')
@@ -344,6 +347,94 @@ let traverseForms  = async (database)=>{
     }
     console.log(cnt);
 }
+
+let showDamagedFiles = async (database)=>{
+    let users = await database.collection('users').find( {}).toArray();
+    let i;
+    for (i = 0; i < users.length; i++) {
+        console.log(`user: ${users[i].userName} proccessed`);
+
+        let hNumberId = users[i].employeeData.hpNumberId ? users[i].employeeData.hpNumberId : users[i].employeeData.hpnumberId;
+        let path = `C:/Users/victor/Documents/Infra/HargalWeb/Source/uploads/${users[i].userName}/${users[i]._id}/${users[i].employeeData.tikNikuimId}/${hNumberId}`
+        let company = await database.collection('company').findOne({'_id':ObjectId(users[i].employeeData.companyId)}); 
+        path += `/${company.name}`;
+
+
+        let forms = await database.collection('forms').find({'employeeId':users[i]._id}).toArray();
+        let j;
+        for (j = 0; j < forms.length; j++) {
+            let form = forms[j];
+            parseFormForFileChk(form,path);
+        }
+    }
+    console.log(`${i+1} users were updated`)
+    console.log("DONE");
+}
+
+// teudat_zeut_folder:"teudat_zeut",
+// sefah_children_teudatZ:"sefah_children",
+// ex_shuma_folder:"exWife_shuma_certificate",
+// tlush:"tlushSahar",
+// cripple_certificate:"cripple_certificate",
+// doc_1312_a:"doc_1312a",
+// teudat_ole:"teudatOle",
+// teudat_toshav_hozer:"teudatToshavHozer",
+// cripple_mate:"benZugNehe",
+// divorce_certificate:"divorceCertificate",
+// mezonot_certificate:"mezonotCertificate",
+// sium_sherut_certificate:"siumSherutCertificate",
+// tofes_119 : "tofes119",
+// graduateCertificate: "graduateCertificate",
+// bankVerification: "bankVerification",
+// no_income_prove:"noIncomeProve",
+// aprove_shuma_clerk:"AproveShumaClerk",
+// ishur_gimlat_child:"ishurGimlatChild",
+// tipForUpload :"*הינך מתבקש להעלות קובץ",
+// textForValidationPdfZip:"בפורמט ZIP ,לצורך בדיקת החתימה דיגיטלית.",
+// TofesHadashToolTip:"פתיחת טופס חדש לשינוים באותה שנה",
+// ShowPirteyOvedTollTip:"הצג פרטי עובד",
+// Form101PdfDownloadFolder : "pdf101Print",
+// containsHebrewMsg:"הינך מקליד בעברית"
+
+let parseFormForFileChk = async (formObj,path) =>{
+    if(formObj){
+        let formDataObj = JSON.parse(formObj.formData);
+        if(formDataObj.zeutFileText){
+            checkOrCorrectFile("teudat_zeut",path,formDataObj.zeutFileText)
+        }
+    }
+
+}
+
+let checkOrCorrectFile = async (folderName,path,actualFileName) =>{
+    let fullPath = `${path}/${folderName}`;
+    if (fs.existsSync(fullPath)) {
+        fs.readdir(fullPath, async (err, items) => {
+            console.log(items);
+            for (var i=0; i<items.length; i++) {
+                console.log(`folder file: ${items[i]}`);
+                console.log(`actual file: ${actualFileName}`);
+               
+                if(items[i] !== actualFileName){
+                    if(actualFileName != "2020"){
+                        let files = items.filter(i=>i.includes(actualFileName));
+                        if(files && files.length === 0){
+                            //no file found to log
+                        }
+                        if(files && files.length === 1){
+                         //change
+                        }
+                        if(files && files.length > 1){
+                            // to log
+                        }
+                    }else{
+
+                    }
+                }
+            }
+        });
+    }
+}
 /////////////////////////////////////////////////////////
 //connect to HG_Tofes and main BL Main function
 /////////////////////////////////////////////////////////
@@ -438,6 +529,9 @@ let traverseForms  = async (database)=>{
                 }
                 if(argv.initPass){
                     initPass(database);
+                }
+                if(argv.showDamagedFiles){
+                    showDamagedFiles(database);
                 }
             }else{
                 console.log("no db");
