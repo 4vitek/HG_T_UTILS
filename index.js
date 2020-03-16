@@ -18,6 +18,8 @@ const prodHost = "10.20.100.71";
 const StageHost = "10.20.100.72";
 const localHost = "localhost";
 const matnasHost= "10.20.100.74";
+let UPLOADS_PATH;
+var GLOBAL_COUNT = 0;
 //Command line (CLI)
 console.log("\n---------------HG_T_UTILS---------------------------------");
 const argv = yargs
@@ -91,9 +93,27 @@ const argv = yargs
     }).option('initPass', {
         alias: 'iP',
         description: 'initiates user password in specific company',
-    }).option('showDamagedFiles', {
+    }).option('correctDamagedFiles', {
         alias: 'shwDF',
-        description: 'show files which differ from db',
+        description: 'correct files which differ from db',
+    }).option('viewDamagedFiles', {
+    alias: 'vDF',
+    description: 'show files which differ from db',
+    }).option('isValidNumberTown', {
+        alias: 'iVal',
+        description: 'shows cities which not code',
+    }).option('showUserTowns', {
+        alias: 'shTwn',
+        description: 'shows cities for users',
+    }).option('unlockUsers', {
+        alias: 'unlock',
+        description: 'unlock users with 10 unsuccessful atempts',
+    }).option('deleteUsersBankData', {
+        alias: 'dlBnk',
+        description: 'delete bankData',
+    }).option('swapStrNum', {
+        alias: 'swNum',
+        description: "swaps street with '\\' symbol ",
     })
     .help()
     .alias('help', 'h')
@@ -102,14 +122,18 @@ const argv = yargs
 //////////////////////////////////////////////////////////////////////////////////////////
 let choseHost = ()=>{
     let host = localHost;
+    UPLOADS_PATH = `C:/Users/victor/Documents/Infra/HargalWeb/Source/uploads`;
     if (argv.prod) {
         host = prodHost;
+        UPLOADS_PATH = `D:/Service/eForms/uploads`;
     }
     if (argv.stage) {
         host = StageHost;
+        UPLOADS_PATH = `D:/Service/eForms/uploads`;
     }
     if (argv.matnas) {
         host = matnasHost;
+        UPLOADS_PATH = `D:/Service/eForms/uploads`;
     }
     return host;
 }
@@ -235,7 +259,7 @@ let fixTextForms = async (database)=>{
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 let fixFormsCodes = async (database)=>{
-    let forms = await database.collection('forms').find({}).toArray();
+    let forms = await database.collection('forms').find({'companyId':ObjectId("5c4d59247f7bdc088cca1eed")}).toArray();
     let cities = await database.collection('cities').find({}).toArray();
     for (let i = 0; i < forms.length; i++) {
         let formDataObj = JSON.parse(forms[i].formData);
@@ -311,7 +335,7 @@ let eml = async (database)=>{
 }
 
 let removeFirstWorker = async (database)=>{
-    let users = await database.collection('users').find({'employeeData.companyId':ObjectId("5dc7b3a53603ea130c59a725")}).toArray();
+    let users = await database.collection('users').find({'employeeData.companyId':ObjectId("5e2d4ee3ad63b71148a0e156")}).toArray();
     for (let i = 0; i < users.length; i++) {
         console.log(`UPDATED: the user ${users[i].userName}`);
         await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'isFirstYearWorker101':false}});
@@ -348,87 +372,296 @@ let traverseForms  = async (database)=>{
     console.log(cnt);
 }
 
-let showDamagedFiles = async (database)=>{
-    let users = await database.collection('users').find( {}).toArray();
+let showUserTowns = async (database)=>{
+    let users = await database.collection('users').find( {'employeeData.companyId':ObjectId("5c4d59247f7bdc088cca1eed")}).toArray();
     let i;
+    let cnt = 0;
+    let cityName = "XXXO";
     for (i = 0; i < users.length; i++) {
-        console.log(`user: ${users[i].userName} proccessed`);
+        if(!users[i].employeeData.addressData.city || users[i].employeeData.addressData.city == null || users[i].employeeData.addressData.city == "null" || isNaN(users[i].employeeData.addressData.city) ){
+            cityName = "XXX";
+        }else{
+            let cities = await database.collection('cities').find({}).toArray();
+            if(users[i].employeeData.addressData && users[i].employeeData.addressData.city){
+                let cityObj = cities.find(c=>c.cityCode == users[i].employeeData.addressData.city);
+                if(cityObj){
+                    cityName = cityObj.cityName;
+                }else{
+                    cityName = "XXXZ";
+                }
+            }else{
+                cityName = "XXXY";
+            }
+        }
+        console.log(`userName: ${users[i].userName} , workerNumber:${users[i].externalId}, city: ${cityName}`);
+        fs.appendFileSync('userTowns.txt',`userName: ${users[i].userName} , workerNumber:${users[i].externalId}, city: ${cityName} \n`);
+        cnt++;
+    }
+    fs.appendFileSync('userTowns.txt',`------------------------------------------------------------------- \n`);
+    fs.appendFileSync('userTowns.txt',`${cnt} users found \n`);
+    console.log(`${cnt} users found`);
 
-        let hNumberId = users[i].employeeData.hpNumberId ? users[i].employeeData.hpNumberId : users[i].employeeData.hpnumberId;
-        let path = `C:/Users/victor/Documents/Infra/HargalWeb/Source/uploads/${users[i].userName}/${users[i]._id}/${users[i].employeeData.tikNikuimId}/${hNumberId}`
-        let company = await database.collection('company').findOne({'_id':ObjectId(users[i].employeeData.companyId)}); 
-        path += `/${company.name}`;
+}
 
+let asyncStam =  async ()=>{
+    return "gops";
+}
 
-        let forms = await database.collection('forms').find({'employeeId':users[i]._id}).toArray();
+let unlockUsers = async (database)=>{
+    let i;
+    let cnt = 0;
+    let users = await database.collection('users').find( {'employeeData.companyId':ObjectId("5db68616e876cc0ca872d00a")}).toArray();
+    for (i = 0; i < users.length; i++) {
+        if(users[i].loginAttempts == 10){
+            await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'loginAttempts':0}});
+            console.log(`${users[i].userName} unlocked`);
+            cnt++;
+        }
+    }
+    console.log(`DONE ${cnt} workers have been released`);
+}
+
+let swapStrNum =  async (database)=>{
+    let users = await database.collection('users').find( {'employeeData.companyId':ObjectId("5c4fe6373dfed7128cbb8eaf")}).toArray();
+    let i;
+    let cnt = 0;
+    for (i = 0; i < users.length; i++) {
+        if(users[i].employeeData.addressData && users[i].employeeData.addressData.streetNumber){
+            if(users[i].employeeData.addressData.streetNumber.includes("\\")){
+                let newStreetNum = users[i].employeeData.addressData.streetNumber.replace(/\\/g, "/");
+                await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'employeeData.addressData.streetNumber':newStreetNum}});
+                console.log(`userName: ${users[i].userName} with double slash replaced`);
+                cnt++;
+            }
+        }
+    }
+    console.log(`DONE ${cnt} workers with double slash in street number was found`);
+}
+
+let deleteUsersBankData =  async (database)=>{
+    // let i;
+    // let cnt = 0;
+    // let users = await database.collection('users').find( {'employeeData.companyId':ObjectId("5db68616e876cc0ca872d00a")}).toArray();
+    // for (i = 0; i < users.length; i++) {
+    //     let forms = await database.collection('forms').find({employeeId:users[i]._id}).toArray();
+    //     if(!forms || forms.length == 0){
+    //         if(users[i].employeeData.bankData){
+    //             if(users[i].employeeData.bankData.codeBranchBank){
+    //                 await database.collection('users').updateOne({_id:users[i]._id},{$set:{'employeeData.bankData.codeBranchBank':""}});
+    //             }
+    //             if(users[i].employeeData.bankData.codeBank){
+    //                 await database.collection('users').updateOne({_id:users[i]._id},{$set:{'employeeData.bankData.codeBank':""}});
+    //             }
+    //             if(users[i].employeeData.bankData.bankAccount){
+    //                 await database.collection('users').updateOne({_id:users[i]._id},{$set:{'employeeData.bankData.bankAccount':""}});
+    //             }
+    //             console.log(`${users[i].userName} bank data deleted`);
+              
+    //         }
+    //         continue;
+    //     }else{
+    //         if(forms.)
+    //     }
+       
+        // if(users[i].loginAttempts == 10){
+        //     await database.collection('users').updateOne({_id:users[i]._id}, {$set: {'loginAttempts':0}});
+        //     console.log(`${users[i].userName} unlocked`);
+        //     cnt++;
+        // }
+    //}
+    console.log(`DONE ${cnt} workers have been released`);
+}
+
+let isValidNumberTown = async (database)=>{
+    let users = await database.collection('users').find( {'employeeData.companyId':ObjectId("5c4d59247f7bdc088cca1eed")}).toArray();
+    let i;
+    let cnt = 0;
+    for (i = 0; i < users.length; i++) {
+        if(!users[i].employeeData.addressData.city || users[i].employeeData.addressData.city == null || users[i].employeeData.addressData.city == "null" || isNaN(users[i].employeeData.addressData.city) ){
+            console.log(`${users[i].userName} problematic \n`);
+            fs.appendFileSync('problematicCities.txt',`${users[i].userName} problematic \n`);
+            cnt++;
+        }
+        if(users[i].userName== "022843908"){
+            let p = 0;
+        }
+        let forms = await database.collection('forms').find({'employeeId':users[i]._id,"formShnatMas":"2020"}).toArray();
         let j;
         for (j = 0; j < forms.length; j++) {
             let form = forms[j];
-            parseFormForFileChk(form,path);
+
+            if(form){
+             //   let formDataObj = JSON.parse(form.formData);
+                // if(!formDataObj.city || formDataObj.city == null || formDataObj.city == "null" || isNaN(formDataObj.city) ){
+                //     console.log(`${formDataObj.username} problematic form in ${form.formShnatMas} city is : ${formDataObj.city} \n`);
+                //     fs.appendFileSync('problematicCities.txt',`${users[i].userName} problematic form in ${form.formShnatMas} city is : ${formDataObj.city} \n`);
+                //     cnt++;
+                // }
+            }
         }
     }
-    console.log(`${i+1} users were updated`)
+    fs.appendFileSync('problematicCities.txt',`--------------------------------------------------------------- \n`);
+    fs.appendFileSync('problematicCities.txt',`${cnt} forms found \n`);
+
+}
+
+let correctDamagedFiles = async (database)=>{
+    let company = await database.collection('company').find( {_id:ObjectId("5db68616e876cc0ca872d00a")}).toArray();
+    for (let k = 0; k < company.length; k++) {
+        let users = await database.collection('users').find( {'employeeData.companyId':company[k]._id}).toArray();
+        let i;
+        for (i = 0; i < users.length; i++) {
+        // console.log(`user: ${users[i].userName} proccessed`);
+
+            let hNumberId = users[i].employeeData.hpNumberId ? users[i].employeeData.hpNumberId : users[i].employeeData.hpnumberId;
+            let path = `${UPLOADS_PATH}/${users[i].userName}/${users[i]._id}/${users[i].employeeData.tikNikuimId}/${hNumberId}`
+            let company = await database.collection('company').findOne({'_id':ObjectId(users[i].employeeData.companyId)}); 
+            path += `/${company.name.replace(/[|&;$%@"<>()+,]/g, "")}`;
+
+
+            let forms = await database.collection('forms').find({'employeeId':users[i]._id,"formShnatMas" : "2020"}).toArray();
+            let j;
+            for (j = 0; j < forms.length; j++) {
+                let form = forms[j];
+                parseFormForFileChk(form,path);
+            }
+        }
+        if(company[k].companyCode){
+            console.log(`${GLOBAL_COUNT} not valid in ${company[k].companyCode} \n`);
+        }
+        if(company[k].name){
+            fs.appendFileSync('logAttachmentsCmp.txt',`${GLOBAL_COUNT} not valid in ${company[k].name} \n`);
+        }
+        GLOBAL_COUNT = 0;
+    }
     console.log("DONE");
 }
 
-// teudat_zeut_folder:"teudat_zeut",
-// sefah_children_teudatZ:"sefah_children",
-// ex_shuma_folder:"exWife_shuma_certificate",
-// tlush:"tlushSahar",
-// cripple_certificate:"cripple_certificate",
-// doc_1312_a:"doc_1312a",
-// teudat_ole:"teudatOle",
-// teudat_toshav_hozer:"teudatToshavHozer",
-// cripple_mate:"benZugNehe",
-// divorce_certificate:"divorceCertificate",
-// mezonot_certificate:"mezonotCertificate",
-// sium_sherut_certificate:"siumSherutCertificate",
-// tofes_119 : "tofes119",
-// graduateCertificate: "graduateCertificate",
-// bankVerification: "bankVerification",
-// no_income_prove:"noIncomeProve",
-// aprove_shuma_clerk:"AproveShumaClerk",
-// ishur_gimlat_child:"ishurGimlatChild",
-// tipForUpload :"*הינך מתבקש להעלות קובץ",
-// textForValidationPdfZip:"בפורמט ZIP ,לצורך בדיקת החתימה דיגיטלית.",
-// TofesHadashToolTip:"פתיחת טופס חדש לשינוים באותה שנה",
-// ShowPirteyOvedTollTip:"הצג פרטי עובד",
-// Form101PdfDownloadFolder : "pdf101Print",
-// containsHebrewMsg:"הינך מקליד בעברית"
+// let correctDamagedFiles = async (database)=>{
+//     let users = await database.collection('users').find( {'employeeData.companyId':ObjectId("5c4828acca20d50f3c2a7465")}).toArray();
+//     let i;
+//     for (i = 0; i < users.length; i++) {
+//         let hNumberId = users[i].employeeData.hpNumberId ? users[i].employeeData.hpNumberId : users[i].employeeData.hpnumberId;
+//         let path = `${UPLOADS_PATH}/${users[i].userName}/${users[i]._id}/${users[i].employeeData.tikNikuimId}/${hNumberId}`
+//         let company = await database.collection('company').findOne({'_id':ObjectId(users[i].employeeData.companyId)}); 
+//         path += `/${company.name.replace(/[|&;$%@"<>()+,]/g, "")}`;
+
+//         let forms = await database.collection('forms').find({'employeeId':users[i]._id}).toArray();
+//         let j;
+//         for (j = 0; j < forms.length; j++) {
+//             let form = forms[j];
+//             parseFormForFileChk(form,path);
+//         }
+//     }
+//     console.log(`${GLOBAL_COUNT} documents were changed`)  
+//     console.log("DONE");
+//   }
+  
 
 let parseFormForFileChk = async (formObj,path) =>{
     if(formObj){
         let formDataObj = JSON.parse(formObj.formData);
         if(formDataObj.zeutFileText){
-            checkOrCorrectFile("teudat_zeut",path,formDataObj.zeutFileText)
+            checkOrCorrectFile("teudat_zeut",path,formDataObj.zeutFileText);
+        }
+        if(formDataObj.childSefahFileText){
+            checkOrCorrectFile("sefah_children",path,formDataObj.childSefahFileText);
+        }
+        if(formDataObj.prudaFileText){
+            checkOrCorrectFile("exWife_shuma_certificate",path,formDataObj.prudaFileText);
+        }
+        if(formDataObj.tlushileText){
+            checkOrCorrectFile("tlushSahar",path,formDataObj.tlushileText);
+        }
+        if(formDataObj.neheIshurFileText){
+            checkOrCorrectFile("cripple_certificate",path,formDataObj.neheIshurFileText);
+        }
+        if(formDataObj.ishurReshut1312FileText){
+            checkOrCorrectFile("doc_1312a",path,formDataObj.ishurReshut1312FileText);
+        }
+        if(formDataObj.teudatOleFileText){
+            checkOrCorrectFile("teudatOle",path,formDataObj.teudatOleFileText);
+        }
+        if(formDataObj.teudatToshavHozerFileText){
+            checkOrCorrectFile("teudatToshavHozer",path,formDataObj.teudatToshavHozerFileText);
+        }
+        if(formDataObj.crippleMateFileText){
+            checkOrCorrectFile("benZugNehe",path,formDataObj.crippleMateFileText);
+        }
+        if(formDataObj.divorceCertificateText){
+            checkOrCorrectFile("divorceCertificate",path,formDataObj.divorceCertificateText);
+        }
+        if(formDataObj.mezonotCertificaText){
+            checkOrCorrectFile("mezonotCertificate",path,formDataObj.mezonotCertificaText);
+        }
+        if(formDataObj.siumSherutCertificateText){
+            checkOrCorrectFile("siumSherutCertificate",path,formDataObj.siumSherutCertificateText);
+        }
+        if(formDataObj.tofes119Text){
+            checkOrCorrectFile("tofes119",path,formDataObj.tofes119Text);
+        }
+        if(formDataObj.graduateCertificateText){
+            checkOrCorrectFile("graduateCertificate",path,formDataObj.graduateCertificateText);
+        }
+        if(formDataObj.bankVerificationText){
+            checkOrCorrectFile("bankVerification",path,formDataObj.bankVerificationText);
+        }
+        if(formDataObj.noIncomeProveText){
+            checkOrCorrectFile("noIncomeProve",path,formDataObj.noIncomeProveText);
+        }
+        if(formDataObj.AproveShumaClerkUpText){
+            checkOrCorrectFile("AproveShumaClerk",path,formDataObj.AproveShumaClerkUpText);
+        }
+        if(formDataObj.gimlatChildFileText){
+            checkOrCorrectFile("ishurGimlatChild",path,formDataObj.gimlatChildFileText);
+        }
+        if(formDataObj.gimlatChildFileText){
+            checkOrCorrectFile("ishurGimlatChild",path,formDataObj.gimlatChildFileText);
         }
     }
-
 }
 
 let checkOrCorrectFile = async (folderName,path,actualFileName) =>{
     let fullPath = `${path}/${folderName}`;
     if (fs.existsSync(fullPath)) {
         fs.readdir(fullPath, async (err, items) => {
-            console.log(items);
+         //   console.log(items);
             for (var i=0; i<items.length; i++) {
-                console.log(`folder file: ${items[i]}`);
-                console.log(`actual file: ${actualFileName}`);
+                // console.log(`folder file: ${items[i]}`);
+                // console.log(`actual file: ${actualFileName}`);
                
                 if(items[i] !== actualFileName){
                     if(actualFileName != "2020"){
-                        let files = items.filter(i=>i.includes(actualFileName));
-                        if(files && files.length === 0){
-                            //no file found to log
+                        let files = items.filter(a=>a.includes(actualFileName)&& a!==actualFileName);
+                        if(files.length === 0){
+                            files = items.filter(a=> actualFileName.includes(a)&& a!==actualFileName);
                         }
-                        if(files && files.length === 1){
-                         //change
+                        //Only for not found/////////
+                        let notFound = items.filter(a=>a.includes(actualFileName));
+                        if(notFound.length === 0){
+                            notFound = items.filter(a=> actualFileName.includes(a));
                         }
-                        if(files && files.length > 1){
-                            // to log
+                        ///////////////////////
+                        if(files && files.length === 1 && files[0] != actualFileName){
+                            if(argv.correctDamagedFiles){
+                                fs.renameSync(`${fullPath}/${files[0]}`, `${fullPath}/${actualFileName}`);
+                                console.log(`${files[0]} renamed to ${actualFileName} at ${fullPath}`);
+                                fs.appendFileSync('logAttachments.txt',`${files[0]} renamed to ${actualFileName} at ${fullPath} \n`);
+                            }else{
+                                console.log(`will be renamed ${++GLOBAL_COUNT}`);
+                            }
+                           
                         }
+                    //    if(argv.correctDamagedFiles){
+                            if(notFound && notFound.length === 0){
+                                fs.appendFileSync('logAttachments.txt',`No files found for file ${actualFileName} at  ${fullPath} \n`);
+                            }
+                            if(files && files.length > 1){
+                                fs.appendFileSync('logAttachments.txt',`more than one files found for file ${actualFileName} at  ${fullPath} \n`);
+                            }
+                  //      }
                     }else{
-
+                        fs.appendFileSync('logAttachments.txt',`file name is ${actualFileName} full path:  ${fullPath}/${actualFileName} \n`);
                     }
                 }
             }
@@ -438,8 +671,9 @@ let checkOrCorrectFile = async (folderName,path,actualFileName) =>{
 /////////////////////////////////////////////////////////
 //connect to HG_Tofes and main BL Main function
 /////////////////////////////////////////////////////////
-(() =>{
+(async () =>{
     let host = choseHost();
+    let p = await asyncStam();
     let filePath = './cities.xlsx';
     MongoClient.connect(`mongodb://${userName}:${pass}@${host}:27017/${dbName}`, 
     { 
@@ -530,8 +764,20 @@ let checkOrCorrectFile = async (folderName,path,actualFileName) =>{
                 if(argv.initPass){
                     initPass(database);
                 }
-                if(argv.showDamagedFiles){
-                    showDamagedFiles(database);
+                if(argv.correctDamagedFiles || argv.viewDamagedFiles){
+                    correctDamagedFiles(database);
+                }
+                if(argv.isValidNumberTown){
+                    isValidNumberTown(database);
+                }
+                if(argv.showUserTowns){
+                    showUserTowns(database);
+                }
+                if(argv.unlockUsers){
+                    unlockUsers(database);
+                }
+                if(argv.swapStrNum){
+                    swapStrNum(database);
                 }
             }else{
                 console.log("no db");

@@ -1,0 +1,16 @@
+{
+    "_id" : ObjectId("5e426867de60f4171868e8b5"),
+    "employeeId" : ObjectId("5e202f4c5d4e070f8cea5450"),
+    "companyId" : ObjectId("5db68616e876cc0ca872d00a"),
+    "formType" : "101",
+    "formShnatMas" : "2020",
+    "formShnatMas" : "2020",
+    "is101FormOpenedAfterArchive" : false,
+    "formData" : "{\"startWorkingDate\":\"2019-12-31T22:00:00.000Z\",\"employeeName\":\"שופרסל בע\\\"מ (גוש דן)\",\"degreeType\":\"\",\"email\":\"YAIRL@SHUFERSAL.CO.IL\",\"street\":\"הגינה\",\"city\":\"2650\",\"cityText\":\"רמת השרון\",\"zipCode\":\"\",\"streetNumber\":\"12\",\"birthDate\":\"1976-09-01T00:00:00.000Z\",\"gender\":\"male\",\"materialState\":\"married\",\"username\":\"033150913\",\"firstname\":\"יאיר\",\"lastName\":\"לוינסון\",\"medicName\":\"makabi\",\"mateFirstName\":\"מיה\",\"mateLastName\":null,\"mateBirtDate\":\"1977-01-20T00:00:00.000Z\",\"mateImmigrationDate\":\"\",\"mateIdName\":\"33498205\",\"fromDateYeshuvMezake\":\"\",\"fromOleToshavHzr\":\"\",\"adOleToshavHzr\":\"\",\"mateSaleryDeclarations\":\"mateNoSallary\",\"childrenZikui\":false,\"childrenMasor18\":\"\",\"childrenAge1\":\"\",\"otherChildrenBefore19\":3,\"otherChildrenBefore18\":\"\",\"childrenShnatMasCount\":\"\",\"childrenAge1shnatMas\":\"\",\"startArmyService\":\"\",\"endArmyService\":\"\",\"declareTofes119File\":\"\",\"graduateCertificateFile\":\"\",\"declarationDate\":\"11/02/2020\",\"immigrationDate\":\",\"cellPhoneNumber\":\"0546702679\",\"phoneNumber\":\"0546702679\",\"extraEmployersitemRows\":[null],\"itemRows\":[null,{\"childFirstName\":\"אריאל\",\"childBirthDay\":\"2009-02-16T00:00:00.000Z\",\"idNum\":\"218088649\",\"myKid\":false,\"kidGender\":\"male\",\"childSefahFile\":null},{\"childFirstName\":\"אורי\",\"childBirthDay\":\"2010-08-01T00:00:00.000Z\",\"idNum\":\"334854478\",\"myKid\":false,\"kidGender\":\"male\",\"childSefahFile\":null},{\"childFirstName\":\"יובל\",\"childBirthDay\":\"2013-10-02T00:00:00.000Z\",\"idNum\":\"221664618\",\"myKid\":false,\"kidGender\":\"male\",\"childSefahFile\":null}],\"teudatOleFileText\":\"\",\"teudatToshavHozerFileText\":\"\",\"bankCode\":\"\",\"bankVerificationFile\":\"\",\"uploadedArr\":[null],\"employeePhone\":\"1800565656\",\"employeeTikNikuim\":\"939038683\"}",
+    "fixDate" : ISODate("2020-02-11T08:40:07.074Z"),
+    "draftDate" : ISODate("2020-02-11T08:51:56.826Z"),
+    "sendDate" : ISODate("2020-02-11T08:40:07.074Z"),
+    "formIdkunDate" : ISODate("2020-02-11T08:51:56.826Z"),
+    "formState" : "draft",
+    "formDate" : ISODate("2020-02-11T08:40:07.074Z")
+}
